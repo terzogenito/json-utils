@@ -22,7 +22,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Publish to npm
-        run: npm publish
+      - name: Bump version and publish to npm
+        run: |
+          npm version patch # Automatically bump the version
+          # Increment PATCH version
+          # npm version patch # For a bug fix (1.0.0 → 1.0.1)
+          # Increment MINOR version
+          # npm version minor # For new features (1.0.0 → 1.1.0)
+          # Increment MAJOR version
+          # npm version major # For breaking changes (1.0.0 → 2.0.0)
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
