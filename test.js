@@ -20,3 +20,15 @@ console.log(app.isJSON(sampleData));
 
 console.log(app.beautifyJSON(sampleData));
 console.log(app.beautifyJSON(sampleData, 4));
+
+const sampleURL = "https://sample-files.com/downloads/documents/xml/basic-structure.xml";
+
+app.getURL(sampleURL, data => {
+	console.log(data);
+});
+
+const sampleURL = "https://filesamples.com/samples/code/json/sample1.json";
+
+app.getJSON(sampleURL,data=>{
+	console.log(app.toString(data));
+});

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const https = require('https');
 
 function readJSON(jsonString) {
   return JSON.parse(jsonString);
@@ -17,6 +18,33 @@ function getFile(filePath, callback) {
       callback(data);
     }
   });
+}
+
+function getURL(url, callback) {
+  https.get(url, (response) => {
+    let data = '';
+    response.on('data', (chunk) => {
+      data += chunk;
+    });
+    response.on('end', () => {
+      callback(data);
+    });
+  }).on('error', (err) => {
+    console.error("Error fetching the URL:", err);
+  });
+}
+
+function isUrl(input) {
+  const urlPattern = /^(https?:\/\/|ftp:\/\/|www\.)/i;
+  return urlPattern.test(input);
+}
+
+function getContent(target, callback) {
+  if (isUrl(target)) {
+    getURL(target, callback);
+  } else {
+    getFile(target, callback);
+  }
 }
 
 function loadFile(filePath) {
@@ -59,8 +87,8 @@ function isJSON(jsonObject) {
   }
 }
 
-function getJSON(filePath, callback) {
-  getFile(filePath, data => {
+function getJSON(target, callback) {
+  getContent(target, data => {
     if (isValid(data)) {
       callback(readJSON(data));
     }
@@ -82,6 +110,7 @@ module.exports = {
   readJSON,
   toString,
   getFile,
+  getURL,
   getData,
   isValid,
   isJSON,
