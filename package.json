@@ -1,6 +1,6 @@
 {
   "name": "@terzogenito/json-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Check JSON Format",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,13 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["nodejs", "module", "json", "check", "utils"],
+  "keywords": [
+    "nodejs",
+    "module",
+    "json",
+    "check",
+    "utils"
+  ],
   "author": "Terzogenito",
   "license": "MIT"
 }
