@@ -7,6 +7,9 @@
     "start": "node test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": ["nodejs", "module", "json", "check", "utils"],
   "author": "Terzogenito",
   "license": "MIT"
