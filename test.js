@@ -3,14 +3,14 @@ const app = require('./index');
 var sampleData = '{"name":"John","age":30,"isActive":true}';
 
 (async () => {
-  console.log(await app.getData('./data.json'));
+  console.log(await app.getData('./test-data.json'));
 })();
 
-app.getFile('data.json',data=>{
+app.getFile('test-data.json',data=>{
 	console.log(app.isValid(data));
 });
 
-app.getJSON('data.json',data=>{
+app.getJSON('test-data.json',data=>{
 	console.log(app.toString(data));
 });
 
@@ -32,3 +32,5 @@ const sampleURL = "https://filesamples.com/samples/code/json/sample1.json";
 app.getJSON(sampleURL,data=>{
 	console.log(app.toString(data));
 });
+
+console.log(app.getString('test-data.json'));

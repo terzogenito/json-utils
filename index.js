@@ -1,6 +1,10 @@
 const fs = require('fs');
 const https = require('https');
 
+function getString(filePath) {
+  return fs.readFileSync(filePath, 'utf-8');
+}
+
 function getFile(filePath, callback) {
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
@@ -107,6 +111,7 @@ function beautifyJSON(jsonString, indent) {
 }
 
 module.exports = {
+  getString,
   getFile,
   getData,
   getURL,
