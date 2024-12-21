@@ -1,6 +1,6 @@
 {
   "name": "@terzogenito/json-utils",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Check JSON Format",
   "main": "index.js",
   "files": [
@@ -13,14 +13,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/terzogenito/json-utils.git"
-  },
-  "bugs": {
-    "url": "https://github.com/terzogenito/json-utils/issues"
-  },
-  "homepage": "https://github.com/terzogenito/json-utils#readme",
   "engines": {
     "node": ">=21.6.1"
   },
