@@ -1,36 +1,59 @@
 const app = require('./index');
 
-var sampleData = '{"name":"John","age":30,"isActive":true}';
-
+/* test 1 : read a file */
+console.log('test 1 : read a file');
 (async () => {
   console.log(await app.getData('./test-data.json'));
 })();
+console.log(app.getString('test-data.json'));
 
+/* test 2 : get and process a file data (check validation) */
+console.log('test 2 : get and process a file data (check validation)');
 app.getFile('test-data.json',data=>{
 	console.log(app.isValid(data));
 });
 
-app.getJSON('test-data.json',data=>{
+/* test 3 : json to string */
+console.log('test 3 : json to string');
+app.getFile('test-data.json',data=>{
 	console.log(app.toString(data));
 });
 
-console.log(app.readJSON(sampleData));
+var sampleJSONString = '{"name":"John","age":30,"isActive":true}';
 
-console.log(app.isJSON(sampleData));
+/* test 4 : read json from json string */
+console.log('test 4 : read json from json string');
+console.log(app.readJSON(sampleJSONString));
 
-console.log(app.beautifyJSON(sampleData));
-console.log(app.beautifyJSON(sampleData, 4));
+/* test 5 : check json string validation */
+console.log('test 5 : check json string validation');
+console.log(app.isJSON(sampleJSONString));
 
-const sampleURL = "https://sample-files.com/downloads/documents/xml/basic-structure.xml";
+var sampleJSONObject = {"name": "John","age": 30,"isActive": true};
 
-app.getURL(sampleURL, data => {
+/* test 6 : check json object validation */
+console.log('test 6 : check json object validation');
+console.log(app.isJSONObject(sampleJSONObject));
+
+/* test 7 : beautify json string with custom indent */
+console.log('test 7 : beautify json string with custom indent');
+console.log(app.beautifyJSON(sampleJSONString1));
+console.log(app.beautifyJSON(sampleJSONString, 4));
+
+/* test 8 : beautify json object */
+console.log('test 8 : beautify json object');
+console.log(app.beautify(sampleJSONObject));
+
+/* test 9 : get string content from url */
+console.log('test 9 : get string content from url');
+const sampleTextURL = "https://sample-files.com/downloads/documents/txt/simple.txt";
+app.getURL(sampleTextURL, data => {
 	console.log(data);
 });
 
-const sampleURL = "https://filesamples.com/samples/code/json/sample1.json";
-
-app.getJSON(sampleURL,data=>{
-	console.log(app.toString(data));
+/* test 10 : get json content from url */
+console.log('test 10 : get json content from url');
+const sampleJSONURL = "https://filesamples.com/samples/code/json/sample1.json";
+app.getJSON(sampleJSONURL,data=>{
+	console.log(data);
 });
-
-console.log(app.getString('test-data.json'));

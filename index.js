@@ -8,7 +8,6 @@ function getString(filePath) {
 function getFile(filePath, callback) {
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
-      console.error("Error reading the file:", err);
       return;
     } else {
       callback(data);
@@ -32,22 +31,22 @@ async function getData(filePath) {
   try {
     const data = await loadFile(filePath);
     return data;
-  } catch (err) {
-    console.error("Error reading the file:", err);
+  } catch {
+    return null;
   }
 }
 
 function getURL(url, callback) {
   https.get(url, (response) => {
     let data = '';
-    response.on('data', (chunk) => {
+    response.on('data', chunk => {
       data += chunk;
     });
     response.on('end', () => {
-      callback(data);
+      callback(data || null);
     });
   }).on('error', (err) => {
-    console.error("Error fetching the URL:", err);
+    callback(null);
   });
 }
 
@@ -76,8 +75,7 @@ function isValid(jsonString) {
   try {
     JSON.parse(jsonString);
     return true;
-  } catch (error) {
-    console.log("The string is not valid JSON.");
+  } catch {
     return false;
   }
 }
@@ -91,21 +89,45 @@ function isJSON(jsonObject) {
   }
 }
 
+function isJSONObject(jsonObject) {
+  try {
+    return typeof jsonObject === 'object' && jsonObject !== null && jsonObject !== undefined;
+  } catch (error) {
+    return false;
+  }
+}
+
 function getJSON(target, callback) {
   getContent(target, data => {
-    if (isValid(data)) {
+    if (!data) {
+      return callback(null);
+    }
+    if (!isValid(data)) {
+      return callback(null);
+    }
+    try {
       callback(readJSON(data));
+    } catch {
+      callback(null);
     }
   });
 }
 
-function beautifyJSON(jsonString, indent) {
+function beautifyJSON(jsonString, indent = 2) {
   try {
+    if (typeof jsonString !== 'string') return null;
     const jsonObject = JSON.parse(jsonString);
+    return JSON.stringify(jsonObject, null, indent);
+  } catch {
+    return null;
+  }
+}
+
+function beautify(jsonObject, indent) {
+  try {
     if (!indent) indent = 2;
     return JSON.stringify(jsonObject, null, indent);
   } catch (error) {
-    console.error("Invalid JSON string:", error);
     return null;
   }
 }
@@ -120,6 +142,8 @@ module.exports = {
   toString,
   isValid,
   isJSON,
+  isJSONObject,
   getJSON,
   beautifyJSON,
+  beautify,
 };
