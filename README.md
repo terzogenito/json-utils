@@ -8,6 +8,14 @@ This module provides various functions for reading, validating, and processing J
 npm install @terzogenito/json-utils
 ```
 
+## Quick Start
+```javascript
+import jsonUtils from '@terzogenito/json-utils';
+
+const jsonAttributes = jsonUtils.getAttributes(jsonData);
+console.log(jsonAttributes);
+```
+
 ## Function List
 
 ### 1. `getData(path)`
@@ -311,15 +319,15 @@ Returns: Object with extracted values (uses last path segment as key for array i
 ### 19. getPartialWithDefaults(jsonObject, attributesConfig)
 ```javascript
 const partialWithDefaults = app.getPartialWithDefaults(dataJSON, {
-"name": "name",
-"status": {
-path: "isActive",
-transform: (val) => val ? "Active" : "Inactive"
-},
-"email": {
-path: "contact.email",
-default: "no-email@example.com"
-}
+    "name": "name",
+    "status": {
+        path: "isActive",
+        transform: (val) => val ? "Active" : "Inactive"
+    },
+    "email": {
+        path: "contact.email",
+        default: "no-email@example.com"
+    }
 });
 ```
 
@@ -337,9 +345,9 @@ Configuration Options:
 - Object: Advanced configuration
 ```javascript
 "formattedAge": {
-path: "age", // Required: Path to attribute
-default: 0, // Optional: Default value if path doesn't exist
-transform: (val) => ${val} years old // Optional: Transformation function
+    path: "age", // Required: Path to attribute
+    default: 0, // Optional: Default value if path doesn't exist
+    transform: (val) => ${val} years old // Optional: Transformation function
 }
 ```
 
@@ -403,15 +411,15 @@ const nestedData = app.getPartialDeep(jsonData, ["user.profile.name", "user.cont
 
 // Extract with transformations and defaults
 const processedData = app.getPartialWithDefaults(jsonData, {
-"fullName": "user.name",
-"ageFormatted": {
-path: "user.age",
-transform: (age) => ${age} years old
-},
-"country": {
-path: "user.address.country",
-default: "Unknown"
-}
+    "fullName": "user.name",
+    "ageFormatted": {
+        path: "user.age",
+        transform: (age) => ${age} years old
+    },
+    "country": {
+        path: "user.address.country",
+        default: "Unknown"
+    }
 });
 
 // Exclude sensitive information

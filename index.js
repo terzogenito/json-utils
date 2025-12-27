@@ -490,6 +490,36 @@ function excludeAttributes(jsonObject, attributesToExclude) {
   }
 }
 
+function getSize(jsonObject) {
+  try {
+    const jsonString = typeof jsonObject === 'string' 
+      ? jsonObject 
+      : JSON.stringify(jsonObject);
+    return new Blob([jsonString]).size;
+  } catch (error) {
+    console.error('Error in getSize:', error);
+    return 0;
+  }
+}
+
+function sortBy(array, key, ascending = true) {
+  try {
+    if (!Array.isArray(array)) return array;
+    
+    return [...array].sort((a, b) => {
+      const aValue = typeof key === 'function' ? key(a) : a[key];
+      const bValue = typeof key === 'function' ? key(b) : b[key];
+      
+      if (aValue < bValue) return ascending ? -1 : 1;
+      if (aValue > bValue) return ascending ? 1 : -1;
+      return 0;
+    });
+  } catch (error) {
+    console.error('Error in sortBy:', error);
+    return array;
+  }
+}
+
 module.exports = {
   getString,
   getFile,
@@ -512,4 +542,6 @@ module.exports = {
   getPartialDeep,
   getPartialWithDefaults,
   excludeAttributes,
+  getSize,
+  sortBy
 };

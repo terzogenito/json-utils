@@ -31,9 +31,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/terzogenito/json-utils.git"
-  },
-  "homepage": "https://github.com/terzogenito/json-utils#readme",
-  "bugs": {
-    "url": "https://github.com/terzogenito/json-utils/issues"
   }
 }
