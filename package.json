@@ -1,7 +1,7 @@
 {
   "name": "@terzogenito/json-utils",
   "version": "1.0.9",
-  "description": "Check JSON Format",
+  "description": "JSON data utilities",
   "main": "index.js",
   "files": [
     "index.js"
@@ -19,10 +19,21 @@
   "keywords": [
     "nodejs",
     "module",
+    "utils",
+    "tools",
     "json",
     "check",
-    "utils"
+    "beautify",
+    "analysis"
   ],
   "author": "Terzogenito",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terzogenito/json-utils.git"
+  },
+  "homepage": "https://github.com/terzogenito/json-utils#readme",
+  "bugs": {
+    "url": "https://github.com/terzogenito/json-utils/issues"
+  }
 }
