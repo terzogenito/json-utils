@@ -1,6 +1,6 @@
 {
   "name": "@terzogenito/json-utils",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "JSON data utilities",
   "main": "index.js",
   "files": [
