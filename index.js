@@ -766,6 +766,41 @@ function filterByKeyPattern(jsonObject, pattern) {
   return filterProperties(jsonObject, (key) => regex.test(key));
 }
 
+function toQueryString(jsonObject, prefix = '') {
+  try {
+    if (typeof jsonObject === 'string') {
+      jsonObject = JSON.parse(jsonObject);
+    }
+
+    if (typeof jsonObject !== 'object' || jsonObject === null) {
+      return '';
+    }
+
+    const params = [];
+    
+    for (const [key, value] of Object.entries(jsonObject)) {
+      const newKey = prefix ? `${prefix}[${key}]` : key;
+      
+      if (value === null || value === undefined) {
+        continue;
+      } else if (typeof value === 'object' && !Array.isArray(value)) {
+        params.push(toQueryString(value, newKey));
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          params.push(`${newKey}[${index}]=${encodeURIComponent(item)}`);
+        });
+      } else {
+        params.push(`${newKey}=${encodeURIComponent(value)}`);
+      }
+    }
+    
+    return params.join('&');
+  } catch (error) {
+    console.error('Error in toQueryString:', error);
+    return '';
+  }
+}
+
 module.exports = {
   getString,
   getFile,
@@ -799,5 +834,6 @@ module.exports = {
   filterProperties,
   filterByType,
   removeEmptyProperties,
-  filterByKeyPattern
+  filterByKeyPattern,
+  toQueryString
 };

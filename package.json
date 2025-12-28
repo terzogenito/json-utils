@@ -1,6 +1,6 @@
 {
   "name": "@terzogenito/json-utils",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "JSON data utilities",
   "main": "index.js",
   "files": [
@@ -14,7 +14,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=21.6.1"
+    "node": ">=8.3.0"
   },
   "keywords": [
     "nodejs",
