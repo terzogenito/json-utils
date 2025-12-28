@@ -639,6 +639,82 @@ function diff(obj1, obj2, path = '') {
   return differences;
 }
 
+function searchValues(jsonObject, predicate) {
+  try {
+    if (typeof jsonObject === 'string') {
+      jsonObject = JSON.parse(jsonObject);
+    }
+
+    if (typeof jsonObject !== 'object' || jsonObject === null) {
+      return [];
+    }
+
+    const results = [];
+    
+    function search(obj, path = '') {
+      if (typeof obj !== 'object' || obj === null) {
+        if (predicate(obj)) {
+          results.push({ path, value: obj });
+        }
+        return;
+      }
+      
+      if (Array.isArray(obj)) {
+        obj.forEach((item, index) => {
+          search(item, path ? `${path}[${index}]` : `[${index}]`);
+        });
+      } else {
+        for (const [key, value] of Object.entries(obj)) {
+          const newPath = path ? `${path}.${key}` : key;
+          
+          if (predicate(value)) {
+            results.push({ path: newPath, value });
+          }
+          
+          if (typeof value === 'object' && value !== null) {
+            search(value, newPath);
+          }
+        }
+      }
+    }
+    
+    search(jsonObject);
+    return results;
+  } catch (error) {
+    console.error('Error in searchValues:', error);
+    return [];
+  }
+}
+
+function findValue(jsonObject, targetValue, deep = true) {
+  return searchValues(jsonObject, (value) => {
+    if (typeof targetValue === 'function') {
+      return targetValue(value);
+    }
+    return value === targetValue;
+  });
+}
+
+function deepMerge(target, source) {
+  if (typeof target !== 'object' || target === null) return source;
+  if (typeof source !== 'object' || source === null) return target;
+  
+  const output = { ...target };
+  
+  for (const [key, value] of Object.entries(source)) {
+    if (key in target && 
+        typeof target[key] === 'object' && target[key] !== null &&
+        typeof value === 'object' && value !== null &&
+        !Array.isArray(target[key]) && !Array.isArray(value)) {
+      output[key] = deepMerge(target[key], value);
+    } else {
+      output[key] = value;
+    }
+  }
+  
+  return output;
+}
+
 module.exports = {
   getString,
   getFile,
@@ -665,5 +741,8 @@ module.exports = {
   sortBy,
   findKeys,
   deepEqual,
-  diff
+  diff,
+  searchValues,
+  findValue,
+  deepMerge
 };
