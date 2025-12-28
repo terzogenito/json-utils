@@ -801,6 +801,88 @@ function toQueryString(jsonObject, prefix = '') {
   }
 }
 
+function validateSchema(jsonObject, schema) {
+  try {
+    if (typeof jsonObject === 'string') {
+      jsonObject = JSON.parse(jsonObject);
+    }
+
+    const errors = [];
+    
+    function validate(obj, rules, path = '') {
+      for (const [key, rule] of Object.entries(rules)) {
+        const newPath = path ? `${path}.${key}` : key;
+        
+        if (rule.required && !(key in obj)) {
+          errors.push(`Missing required field: ${newPath}`);
+          continue;
+        }
+        
+        if (!(key in obj)) continue;
+        
+        const value = obj[key];
+
+        if (rule.type) {
+          let isValid = false;
+          
+          switch (rule.type) {
+            case 'string':
+              isValid = typeof value === 'string';
+              break;
+            case 'number':
+              isValid = typeof value === 'number';
+              break;
+            case 'integer':
+              isValid = Number.isInteger(value);
+              break;
+            case 'boolean':
+              isValid = typeof value === 'boolean';
+              break;
+            case 'array':
+              isValid = Array.isArray(value);
+              break;
+            case 'object':
+              isValid = typeof value === 'object' && value !== null && !Array.isArray(value);
+              break;
+            case 'null':
+              isValid = value === null;
+              break;
+            case 'date':
+              isValid = value instanceof Date;
+              break;
+          }
+          
+          if (!isValid) {
+            errors.push(`Invalid type for ${newPath}: expected ${rule.type}`);
+          }
+        }
+
+        if (rule.properties && typeof value === 'object' && value !== null) {
+          validate(value, rule.properties, newPath);
+        }
+
+        if (rule.items && Array.isArray(value)) {
+          value.forEach((item, index) => {
+            validate({ item }, { item: rule.items }, `${newPath}[${index}]`);
+          });
+        }
+      }
+    }
+    
+    validate(jsonObject, schema);
+    
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      errors: [`Validation error: ${error.message}`]
+    };
+  }
+}
+
 module.exports = {
   getString,
   getFile,
@@ -835,5 +917,6 @@ module.exports = {
   filterByType,
   removeEmptyProperties,
   filterByKeyPattern,
-  toQueryString
+  toQueryString,
+  validateSchema
 };
