@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -19,18 +21,17 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Install dependencies
         run: npm install
 
       - name: Bump version and publish to npm
         run: |
-          npm version patch # Automatically bump the version
-          # Increment PATCH version
-          # npm version patch # For a bug fix (1.0.0 → 1.0.1)
-          # Increment MINOR version
-          # npm version minor # For new features (1.0.0 → 1.1.0)
-          # Increment MAJOR version
-          # npm version major # For breaking changes (1.0.0 → 2.0.0)
+          npm version patch -m "chore: release %s"
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

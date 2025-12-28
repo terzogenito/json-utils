@@ -520,6 +520,125 @@ function sortBy(array, key, ascending = true) {
   }
 }
 
+function findKeys(jsonObject, keyName) {
+  try {
+    if (typeof jsonObject === 'string') {
+      jsonObject = JSON.parse(jsonObject);
+    }
+
+    if (typeof jsonObject !== 'object' || jsonObject === null) {
+      return [];
+    }
+
+    const results = [];
+    const pattern = keyName.includes('*') 
+      ? new RegExp('^' + keyName.replace(/\*/g, '.*') + '$')
+      : null;
+    
+    function search(obj, path = '') {
+      if (typeof obj !== 'object' || obj === null) return;
+      
+      if (Array.isArray(obj)) {
+        obj.forEach((item, index) => {
+          search(item, path ? `${path}[${index}]` : `[${index}]`);
+        });
+      } else {
+        for (const [key, value] of Object.entries(obj)) {
+          const newPath = path ? `${path}.${key}` : key;
+          
+          const isMatch = pattern ? pattern.test(key) : key === keyName;
+          if (isMatch) {
+            results.push({ path: newPath, value });
+          }
+          
+          if (typeof value === 'object' && value !== null) {
+            search(value, newPath);
+          }
+        }
+      }
+    }
+    
+    search(jsonObject);
+    return results;
+  } catch (error) {
+    console.error('Error in findKeys:', error);
+    return [];
+  }
+}
+
+function deepEqual(obj1, obj2) {
+  if (obj1 === obj2) return true;
+  
+  if (typeof obj1 !== 'object' || obj1 === null || 
+      typeof obj2 !== 'object' || obj2 === null) {
+    return false;
+  }
+  
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+  
+  if (keys1.length !== keys2.length) return false;
+  
+  for (const key of keys1) {
+    if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function diff(obj1, obj2, path = '') {
+  const differences = [];
+  
+  if (typeof obj1 !== 'object' || obj1 === null ||
+      typeof obj2 !== 'object' || obj2 === null) {
+    if (obj1 !== obj2) {
+      differences.push({
+        path,
+        type: 'value',
+        old: obj1,
+        new: obj2
+      });
+    }
+    return differences;
+  }
+  
+  const allKeys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
+  
+  for (const key of allKeys) {
+    const newPath = path ? `${path}.${key}` : key;
+    
+    if (!(key in obj1)) {
+      differences.push({
+        path: newPath,
+        type: 'added',
+        value: obj2[key]
+      });
+    } else if (!(key in obj2)) {
+      differences.push({
+        path: newPath,
+        type: 'removed',
+        value: obj1[key]
+      });
+    } else if (!deepEqual(obj1[key], obj2[key])) {
+      if (typeof obj1[key] === 'object' && obj1[key] !== null &&
+          typeof obj2[key] === 'object' && obj2[key] !== null) {
+        differences.push(...diff(obj1[key], obj2[key], newPath));
+      } else {
+        differences.push({
+          path: newPath,
+          type: 'changed',
+          old: obj1[key],
+          new: obj2[key]
+        });
+      }
+    }
+  }
+  
+  return differences;
+}
+
 module.exports = {
   getString,
   getFile,
@@ -543,5 +662,8 @@ module.exports = {
   getPartialWithDefaults,
   excludeAttributes,
   getSize,
-  sortBy
+  sortBy,
+  findKeys,
+  deepEqual,
+  diff
 };
