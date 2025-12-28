@@ -715,6 +715,57 @@ function deepMerge(target, source) {
   return output;
 }
 
+function filterProperties(jsonObject, predicate) {
+  try {
+    if (typeof jsonObject === 'string') {
+      jsonObject = JSON.parse(jsonObject);
+    }
+
+    if (typeof jsonObject !== 'object' || jsonObject === null) {
+      return {};
+    }
+
+    const result = {};
+    
+    for (const [key, value] of Object.entries(jsonObject)) {
+      if (predicate(key, value)) {
+        result[key] = value;
+      }
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Error in filterProperties:', error);
+    return {};
+  }
+}
+
+function filterByType(jsonObject, type) {
+  return filterProperties(jsonObject, (key, value) => {
+    if (type === 'array') return Array.isArray(value);
+    if (type === 'null') return value === null;
+    if (type === 'date') return value instanceof Date;
+    if (type === 'integer') return typeof value === 'number' && Number.isInteger(value);
+    if (type === 'float') return typeof value === 'number' && !Number.isInteger(value);
+    return typeof value === type;
+  });
+}
+
+function removeEmptyProperties(jsonObject, includeEmptyStrings = false) {
+  return filterProperties(jsonObject, (key, value) => {
+    if (value === null || value === undefined) return false;
+    if (includeEmptyStrings && value === '') return false;
+    if (Array.isArray(value) && value.length === 0) return false;
+    if (typeof value === 'object' && Object.keys(value).length === 0) return false;
+    return true;
+  });
+}
+
+function filterByKeyPattern(jsonObject, pattern) {
+  const regex = new RegExp(pattern);
+  return filterProperties(jsonObject, (key) => regex.test(key));
+}
+
 module.exports = {
   getString,
   getFile,
@@ -744,5 +795,9 @@ module.exports = {
   diff,
   searchValues,
   findValue,
-  deepMerge
+  deepMerge,
+  filterProperties,
+  filterByType,
+  removeEmptyProperties,
+  filterByKeyPattern
 };
